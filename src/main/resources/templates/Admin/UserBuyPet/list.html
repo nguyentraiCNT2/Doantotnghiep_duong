@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Mua Thú Cưng</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            color: #4a5568;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        h3 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #FFA500;
+            box-shadow: 0 0 5px rgba(170, 106, 10, 0.3);
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background: #FFA500 !important;
+            border: none !important;
+            color: #000 !important;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning:hover,
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+
+        .table {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #D2B48C, #d5c9b7);
+            color: #ffffff !important;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include Header -->
+<th:block th:replace="Admin/Layout/header"></th:block>
+
+<!-- Include Navbar -->
+<th:block th:replace="Admin/Layout/navbar"></th:block>
+
+<!-- Content -->
+<div class="container mt-4">
+    <h3 class="mb-3">Quản lý Mua Thú Cưng</h3>
+
+    <!-- Hiển thị thông báo lỗi -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- Bộ lọc -->
+    <form class="row g-3 mb-4" th:action="@{/user-buy-pets}" method="get">
+        <div class="col-md-3">
+            <a href="/admin/user-buy-pets/add" class="btn btn-success">
+                <i class="fas fa-plus"></i> Thêm Mua Thú Cưng
+            </a>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="userName" placeholder="Tên người dùng..." th:value="${param.userName}">
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="petName" placeholder="Tên thú cưng..." th:value="${param.petName}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </form>
+
+    <!-- Bảng danh sách mua thú cưng -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Người Mua</th>
+            <th>Email Người mua</th>
+            <th>Số điện thoại </th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, iterStat : ${userDTOPage}">
+            <td th:text="${iterStat.count}"></td>
+            <td th:text="${user.fullName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phone}"></td>
+            <td>
+                <a th:href="@{/admin/user-buy-pets/by-user/{id}(id=${user.id})}" class="btn btn-warning btn-sm">
+                    <i class="fa-solid fa-list"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav>
+        <ul class="pagination">
+            <th:block th:if="${totalPages > 1}">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/admin/user-buy-pets(page=${currentPage > 0 ? currentPage - 1 : 0})}">Trang trước</a>
+                </li>
+            </th:block>
+
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active' : ''">
+                <a class="page-link" th:href="@{/admin/user-buy-pets(page=${i}, userName=${param.userName}, petName=${param.petName})}" th:text="${i + 1}"></a>
+            </li>
+
+            <th:block th:if="${currentPage + 1 < totalPages}">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/admin/user-buy-pets(page=${currentPage + 1})}">Trang sau</a>
+                </li>
+            </th:block>
+        </ul>
+    </nav>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

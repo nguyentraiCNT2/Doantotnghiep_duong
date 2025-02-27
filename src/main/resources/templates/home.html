@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang Chủ - Pet Shop</title>
+
+    <!-- CSS: Bootstrap & Swiper -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <style>
+        /* Global */
+        body {
+            background-color: #FFF8F0; /* Nền kem ấm áp */
+            color: #3E2723; /* Màu chữ: nâu đậm */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* Header */
+        .header {
+            background-color: #5D4037; /* Nâu socola ấm áp */
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .shop-name {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .header nav a {
+            color: #FFFFFF;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .header nav a:hover {
+            color: #D4A373; /* Vàng cam điểm nhấn */
+        }
+
+        /* Carousel Slide */
+        .carousel {
+            margin-top: 70px; /* Để không bị che bởi header */
+        }
+        .carousel-inner .carousel-item {
+            height: 80vh;
+            position: relative;
+        }
+        .carousel-inner .carousel-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+            z-index: 1;
+        }
+        .carousel-inner .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8);
+        }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #5D4037;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        .section-title::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: #D4A373; /* Màu điểm nhấn */
+            border-radius: 2px;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 50px 0;
+            background-color: #FFF8F0;
+        }
+        .service-item {
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .service-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .service-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Pets Section */
+        .pets {
+            padding: 50px 0;
+            background-color: #FDFBF7; /* Một chút khác biệt so với nền chung */
+        }
+        .pet-item {
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .pet-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .pet-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Swiper Navigation */
+        .swiper-button-next,
+        .swiper-button-prev {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #5D4037;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .swiper-button-next:hover,
+        .swiper-button-prev:hover {
+            background-color: #5D4037;
+            color: #FFF8F0;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="Layout/Header"></th:block>
+
+<!-- Carousel Slide -->
+<div id="homepageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://cdn.mobilecity.vn/mobilecity-vn/images/2021/12/tong-hop-meo-giup-ban-chup-nhung-buc-anh-dep-hon-ve-thu-cung-cua-minh.jpg.webp" alt="Slide 1">
+        </div>
+        <div class="carousel-item">
+            <img src="https://gcs.tripi.vn/public-tripi/tripi-feed/img/474091jkR/hinh-anh-thu-cung-cute-tuyet-dep_013757583.jpg" alt="Slide 2">
+        </div>
+        <div class="carousel-item">
+            <img src="https://i.pinimg.com/550x/c3/ce/ef/c3ceef96087eaba7b3c649295dc4dbe9.jpg" alt="Slide 3">
+        </div>
+        <div class="carousel-item">
+            <img src="https://cutepetshop.vn/wp-content/uploads/2023/05/ec02ec4be1b374b2aebe588be25b8bc6.jpg" alt="Slide 4">
+        </div>
+        <div class="carousel-item">
+            <img src="https://png.pngtree.com/background/20211216/original/pngtree-animals-dogs-cute-pets-pet-puppy-pictures-picture-image_1522444.jpg" alt="Slide 5">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#homepageCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#homepageCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Dịch Vụ Section -->
+<section class="services">
+    <div class="container">
+        <h2 class="section-title">Dịch Vụ</h2>
+        <!-- Swiper cho Dịch Vụ -->
+        <div class="swiper myServiceSwiper">
+            <div class="swiper-wrapper">
+                <!-- Ví dụ 6 dịch vụ. Bạn có thể lặp lại hoặc lấy từ dữ liệu động -->
+                <div class="swiper-slide" th:each="service, iterStat : ${services}">
+                    <div class="service-item">
+                        <img th:if="${service.imageBase64}" th:src="${service.imageBase64}" alt="Dịch Vụ 1">
+                        <p th:text="${service.name}">Dịch Vụ 1</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Nút chuyển cho Swiper -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Thú Cưng Section -->
+<section class="pets">
+    <div class="container">
+        <h2 class="section-title">Thú Cưng</h2>
+        <div class="row">
+            <!-- Hiển thị 8 thú cưng -->
+            <div class="col-md-3 mb-4" th:each="pet, iterStat : ${pets}">
+                <div class="pet-item">
+                    <img th:if="${pet.imageBase64}" th:src="${pet.imageBase64}" alt="Thú Cưng 1">
+                    <h5 th:text="${pet.name}">Thú Cưng 1</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<th:block th:replace="Layout/Footer"></th:block>
+
+<!-- JS: Bootstrap & Swiper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    // Khởi tạo Swiper cho dịch vụ
+    const serviceSwiper = new Swiper('.myServiceSwiper', {
+        slidesPerView: 3,
+        spaceBetween: 30,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            320: { slidesPerView: 1 },
+            576: { slidesPerView: 2 },
+            768: { slidesPerView: 3 },
+            992: { slidesPerView: 4 },
+        }
+    });
+</script>
+</body>
+</html>

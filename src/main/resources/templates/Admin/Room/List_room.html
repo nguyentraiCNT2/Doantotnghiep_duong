@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Room</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            color: #4a5568;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        h3 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        /* Khung danh sách cuộn dọc */
+        .scrollable-container {
+            max-height: 600px;
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+        /* Định dạng cho mỗi room item */
+        .room-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .room-item:last-child {
+            border-bottom: none;
+        }
+        .room-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        .room-info {
+            flex: 1;
+        }
+        .room-info div {
+            margin: 0;
+            line-height: 1.2;
+            font-size: 23px;
+            font-weight: bold;
+        }
+        .room-action a {
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include Header -->
+<th:block th:replace="Admin/Layout/header"></th:block>
+
+<!-- Include Navbar -->
+<th:block th:replace="Admin/Layout/navbar"></th:block>
+<div class="container">
+    <h3>Danh Sách Room</h3>
+
+    <!-- Hiển thị thông báo lỗi nếu có -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- Danh sách room với cuộn dọc -->
+    <div class="scrollable-container">
+        <div th:each="room : ${rooms}" class="room-item">
+            <div>
+                <img th:if="${room.customer.imageBase64 != null}"
+                     th:src="${room.customer.imageBase64}"
+                     alt="Customer Image"
+                     class="room-image">
+                <img th:if="${room.customer.imageBase64 == null}"
+                     src="https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+                     alt="Customer Image"
+                     class="room-image">
+            </div>
+            <div class="room-info">
+                <div th:text="${room.customer.fullName}"></div>
+<!--                <div th:text="${room.customer.role}"></div>-->
+            </div>
+            <div class="room-action">
+                <a th:href="@{/admin/room/user/{id}(id=${room.id})}" class="btn btn-warning btn-sm">
+                    Tư vấn
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

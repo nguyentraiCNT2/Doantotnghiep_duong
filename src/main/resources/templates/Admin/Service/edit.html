@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Sửa Dịch Vụ</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <style>
+    /* Body styling */
+    body {
+      background: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      color: #4a5568;
+    }
+
+    /* Container styling */
+    .container {
+      margin-top: 2rem;
+      max-width: 800px;
+    }
+
+    /* Header styling */
+    h2 {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Form styling */
+    .form-label {
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #6a11cb;
+      box-shadow: 0 0 5px rgba(106, 17, 203, 0.3);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    /* Button styling */
+    .btn {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      border: none;
+      color: #ffffff;
+    }
+
+    .btn-warning:hover {
+      background: linear-gradient(135deg, #e67e22, #f39c12);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #718096;
+      border: none;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background: #4a5568;
+      transform: translateY(-2px);
+    }
+
+    /* Alert styling */
+    .alert {
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-danger {
+      background: #fed7d7;
+      border: 1px solid #feb2b2;
+      color: #e53e3e;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Include Header -->
+<th:block th:replace="Admin/Layout/header"></th:block>
+
+<!-- Include Navbar -->
+<th:block th:replace="Admin/Layout/navbar"></th:block>
+<!-- Content -->
+<div class="container mt-4">
+  <h2>Sửa Dịch Vụ</h2>
+
+  <!-- Hiển thị thông báo lỗi -->
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <!-- Form sửa dịch vụ -->
+  <form th:action="@{/admin/services/edit/{id}(id=${service.id})}" method="post" enctype="multipart/form-data">
+    <!-- ID dịch vụ (ẩn) -->
+    <input type="hidden" name="id" readonly th:value="${service.id}">
+
+    <!-- Tên dịch vụ -->
+    <div class="mb-3">
+      <label class="form-label">Tên Dịch Vụ</label>
+      <input type="text" class="form-control" name="name" th:value="${service.name}" required>
+    </div>
+
+    <!-- Mô tả -->
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <textarea class="form-control" name="description" required th:text="${service.description}"></textarea>
+    </div>
+
+    <!-- Thời gian -->
+    <div class="mb-3">
+      <label class="form-label">Thời gian (phút)</label>
+      <input type="number" class="form-control" name="duration" th:value="${service.duration}" required>
+    </div>
+
+    <!-- Ảnh hiện tại -->
+    <div class="mb-3">
+      <label class="form-label">Ảnh hiện tại</label><br>
+      <img th:if="${service.imageBase64}" th:src="${service.imageBase64}" alt="Ảnh dịch vụ" width="200" height="300" style="object-fit: cover"  class="rounded">
+    </div>
+
+    <!-- Ảnh mới -->
+    <div class="mb-3">
+      <label class="form-label" lang="vi">Ảnh mới (nếu muốn thay đổi)</label>
+      <div class="input-group">
+        <label for="imageFile" class="btn btn-primary">Chọn ảnh</label>
+        <input type="file" class="form-control d-none" id="imageFile" name="imageFile" accept="image/*" onchange="updateFileName()">
+        <span id="file-name" style="margin-left: 10px;">Chưa có ảnh nào được chọn</span>
+      </div>
+    </div>
+
+    <!-- Nút cập nhật và quay lại -->
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-warning">
+        <i class="fas fa-save"></i> Cập nhật
+      </button>
+      <a href="/admin/services" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+      </a>
+    </div>
+  </form>
+</div>
+<script>
+  function updateFileName() {
+    let input = document.getElementById("imageFile");
+    let fileName = input.files.length > 0 ? input.files[0].name : "Chưa có ảnh nào được chọn";
+    document.getElementById("file-name").textContent = fileName;
+  }
+</script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

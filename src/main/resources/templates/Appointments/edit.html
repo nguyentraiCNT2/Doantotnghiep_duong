@@ -1,0 +1,55 @@
+<!-- create.html - Trang thêm mới cuộc hẹn -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Cuộc Hẹn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+<th:block th:replace="Admin/Layout/header"></th:block>
+<th:block th:replace="Admin/Layout/navbar"></th:block>
+
+<div class="container mt-4">
+    <h3>Cập Nhật Cuộc Hẹn</h3>
+    <form th:action="@{/superadmin/appointments/edit/{id}(id=${appointment.id})}" method="post">
+        <input type="hidden" name="id" th:value="${appointment.id}">
+
+        <div class="mb-3">
+            <label for="petId" class="form-label">Thú cưng</label>
+            <select id="petId" name="petId.id" class="form-control" aria-readonly="true">
+                <option value="">--Chọn thú cưng--</option>
+                <option th:each="pet : ${pets}" th:value="${pet.id}" th:selected="${appointment.petId.id == pet.id}" th:text="${pet.name}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="serviceId" class="form-label">Dịch vụ</label>
+            <select id="serviceId" name="serviceId.id" class="form-control" aria-readonly="true">
+                <option value="">--Chọn Dịch vụ--</option>
+                <option th:each="service : ${services}" th:value="${service.id}" th:selected="${appointment.serviceId.id == service.id}" th:text="${service.name}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="appointmentDate" class="form-label">Ngày hẹn</label>
+            <input type="date" id="appointmentDate" name="appointmentDate" th:value="${appointment.appointmentDate}" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="notes" class="form-label">Ghi chú</label>
+            <textarea id="notes" name="notes" class="form-control" th:value="${appointment.notes}" rows="3" readonly></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">Trạng thái</label>
+            <select id="status" name="status" class="form-control" required>
+                <option value="Pending" th:selected="${appointment.status == 'Pending'}">Chờ xử lý</option>
+                <option value="Confirmed" th:selected="${appointment.status == 'Confirmed'}">Đã xác nhận</option>
+                <option value="Completed" th:selected="${appointment.status == 'Completed'}">Hoàn thành</option>
+                <option value="Cancelled" th:selected="${appointment.status == 'Cancelled'}">Hủy</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Cập Nhật</button>
+        <a href="/superadmin/appointments/list" class="btn btn-success">Cập Nhật</a>
+    </form>
+</div>
+</body>
+</html>

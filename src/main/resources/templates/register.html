@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng Ký - Pet Shop</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body styling */
+    body {
+      background: linear-gradient(135deg, #f9fafb, #e2e8f0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Register container */
+    .register-container {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px; /* Tăng chiều rộng để phù hợp với 2 cột */
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Decorative shapes */
+    .register-container::before,
+    .register-container::after {
+      content: '';
+      position: absolute;
+      background: rgba(106, 17, 203, 0.1);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .register-container::before {
+      width: 150px;
+      height: 150px;
+      top: -50px;
+      left: -50px;
+    }
+
+    .register-container::after {
+      width: 100px;
+      height: 100px;
+      bottom: -30px;
+      right: -30px;
+    }
+
+    /* Logo */
+    .register-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.1));
+    }
+
+    /* Title */
+    .register-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Error message */
+    .error-message {
+      color: #e53e3e;
+      background: #fed7d7;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 1rem;
+      border: 1px solid #feb2b2;
+      font-size: 0.9rem;
+    }
+
+    /* Form styling */
+    .register-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* Input group */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: left;
+      flex: 1 1 calc(50% - 0.5rem); /* Chia thành 2 cột */
+    }
+
+    /* Labels */
+    .form-label {
+      font-weight: 500;
+      color: #4a5568;
+      font-size: 0.9rem;
+    }
+
+    /* Input fields */
+    .form-control {
+      width: 100% !important;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px !important;
+      padding: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #6a11cb;
+      box-shadow: 0 0 5px rgba(106, 17, 203, 0.3);
+    }
+
+    /* Register button */
+    .register-btn {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      border: none;
+      color: white;
+      font-weight: 500;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .register-btn:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      transform: translateY(-2px);
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Login link */
+    .login-link {
+      margin-top: 1rem;
+      color: #4a5568;
+      font-size: 0.9rem;
+    }
+
+    .login-link a {
+      color: #6a11cb;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: #2575fc;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <img src="https://cdn-icons-png.flaticon.com/512/616/616554.png" alt="Pet Logo" class="register-logo">
+  <h2 class="register-title">Đăng Ký Tài Khoản</h2>
+
+  <!-- Hiển thị lỗi nếu có -->
+  <div th:if="${error}" class="error-message">
+    <p th:text="${error}"></p>
+  </div>
+
+  <form class="register-form" th:action="@{/register}" method="post">
+    <!-- Cột 1 -->
+    <div class="input-group">
+      <label for="fullName" class="form-label">Họ và Tên:</label>
+      <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Nhập họ và tên" required>
+    </div>
+
+    <div class="input-group">
+      <label for="email" class="form-label">Email:</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
+    </div>
+
+    <div class="input-group">
+      <label for="phone" class="form-label">Số điện thoại:</label>
+      <input type="text" class="form-control" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+    </div>
+
+    <!-- Cột 2 -->
+    <div class="input-group">
+      <label for="password" class="form-label">Mật khẩu:</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+    </div>
+
+    <div class="input-group">
+      <label for="address" class="form-label">Địa chỉ:</label>
+      <input type="text" class="form-control" id="address" name="address" placeholder="Nhập địa chỉ" required>
+    </div>
+
+    <div class="input-group">
+      <label for="gender" class="form-label">Giới tính:</label>
+      <select id="gender" name="gender" class="form-control">
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+        <option value="Khác">Khác</option>
+      </select>
+    </div>
+
+    <!-- Nút đăng ký -->
+    <button type="submit" class="register-btn">Đăng Ký</button>
+  </form>
+
+  <!-- Link đăng nhập -->
+  <p class="login-link">
+    Bạn đã có tài khoản? <a th:href="@{/login}">Đăng nhập ngay</a>
+  </p>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Trang nền tương tự Facebook Messenger */
+        body {
+            background: #f0f2f5;
+            font-family: Arial, sans-serif;
+        }
+        /* Khung chat: nền trắng, bo tròn, bóng đổ nhẹ */
+        .chat-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* Tin nhắn dạng bubble */
+        .chat-message {
+            max-width: 70%;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.4;
+            clear: both;
+        }
+        /* Bubble tin nhắn của người khác: căn trái, nền xám nhạt */
+        .chat-message.left {
+            background: #f0f0f0;
+            float: left;
+            text-align: left;
+        }
+        /* Bubble tin nhắn của người gửi hiện hành: căn phải, nền xanh dương */
+        .chat-message.right {
+            background: #0084ff;
+            color: #fff;
+            float: right;
+            text-align: right;
+        }
+        /* Thông tin người gửi */
+        .chat-message .sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        /* Thời gian tin nhắn */
+        .chat-message .timestamp {
+            font-size: 11px;
+            color: rgba(0,0,0,0.45);
+            margin-top: 5px;
+            display: block;
+        }
+        /* Style form gửi tin nhắn */
+        .chat-form {
+            margin-top: 15px;
+        }
+        .chat-form input[type="text"] {
+            border-radius: 20px;
+        }
+        .chat-form button {
+            border-radius: 20px;
+        }
+        /* Clear float cho container */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+<!-- Include Header & Navbar nếu có -->
+<th:block th:replace="Admin/Layout/header"></th:block>
+<th:block th:replace="Admin/Layout/navbar"></th:block>
+<div class="container mt-4">
+    <!-- Hiển thị tên phòng khách hàng -->
+    <h3 th:text="${room.customer.fullName}"></h3>
+    <a href="/admin/room">Quay lại</a>
+    <!-- Thông báo lỗi nếu có -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <!-- Thông tin phòng (ví dụ: tên khách hàng) -->
+    <div class="mb-3">
+        <p>Khách hàng: <span th:text="${room.customer.fullName}">Tên khách hàng</span></p>
+    </div>
+    <!-- Khung hiển thị tin nhắn -->
+    <div id="chatContainer" class="chat-container clearfix">
+        <!-- Tin nhắn sẽ được load tại đây -->
+    </div>
+    <input type="hidden" id="userEmail" th:value="${session.userEmail}">
+    <!-- Form gửi tin nhắn -->
+    <form id="chatForm" class="chat-form" action="/admin/send/chat/send" method="post">
+        <div class="input-group">
+            <input type="text" id="messageInput" class="form-control" name="content" placeholder="Nhập tin nhắn..." required>
+            <input type="hidden" id="roomId" name="roomId.id" th:value="${room.id}">
+            <button class="btn btn-primary" type="submit">Gửi</button>
+        </div>
+    </form>
+</div>
+
+<!-- Script AJAX, polling tin nhắn và gửi tin -->
+<script th:inline="javascript">
+    // Hàm định dạng thời gian
+    function formatTimestamp(timestamp) {
+        // Chuyển chuỗi timestamp (hoặc giá trị tương tự) thành đối tượng Date
+        let createdDate = new Date(timestamp);
+        let now = new Date();
+        let diffMs = now - createdDate;
+        let diffMinutes = Math.floor(diffMs / 60000);
+        let diffHours = Math.floor(diffMs / 3600000);
+        let diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMs < 60000) {  // nếu chưa tới 1 phút
+            return "vừa mới";
+        } else if (diffHours < 1) {
+            return diffMinutes + " phút trước";
+        } else if (diffHours < 24) {
+            return diffHours + " giờ trước";
+        } else if (diffDays < 7) {
+            return diffDays + " ngày trước";
+        } else {
+            // Định dạng ngày tháng năm: dd/MM/yyyy
+            let day = createdDate.getDate();
+            let month = createdDate.getMonth() + 1;
+            let year = createdDate.getFullYear();
+            return (day < 10 ? "0" + day : day) + "/" + (month < 10 ? "0" + month : month) + "/" + year;
+        }
+    }
+    // Lấy giá trị roomId từ input hidden
+    let roomId = document.getElementById('roomId').value;
+    console.log("Room ID:", roomId);
+    let lastMessageId = 0;
+
+    // Hàm lấy tin nhắn mới dựa vào lastMessageId và roomId
+    function fetchNewMessages() {
+        $.ajax({
+            url: '/admin/chat/getNewMessages',
+            type: 'GET',
+            data: { lastId: lastMessageId, roomId: roomId },
+            success: function(messages) {
+                messages.forEach(function(message) {
+                    // Ví dụ: nếu message.userId.fullName trùng với currentUserName, căn phải; nếu không căn trái.
+                    // Bạn có thể lấy currentUserName từ session hoặc một biến JavaScript.
+                    let alignment = "left";
+                    // Giả sử currentUserName là "You". Thay đổi theo logic của bạn.
+                    let currentUserName = document.getElementById('userEmail').value;
+                    if(message.userId.email === currentUserName) {
+                        alignment = "right";
+                    }
+                    let messageHtml = `<div class="chat-message ${alignment}">
+                                                <div class="sender">${message.userId.fullName}</div>
+                                                <div class="content">${message.content}</div>
+                                         <div class="timestamp">${formatTimestamp(message.createdAt)}</div>
+                                            </div>`;
+                    $('#chatContainer').append(messageHtml);
+                    lastMessageId = Math.max(lastMessageId, message.id);
+                });
+                // Cuộn xuống cuối khung chat
+                $('#chatContainer').scrollTop($('#chatContainer')[0].scrollHeight);
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi tải tin nhắn: " + error);
+            }
+        });
+    }
+
+    // Polling tin nhắn mới mỗi 3 giây
+    setInterval(fetchNewMessages, 3000);
+
+    // Tải tin nhắn ban đầu khi trang load
+    $(document).ready(function() {
+        fetchNewMessages();
+    });
+</script>
+</body>
+</html>

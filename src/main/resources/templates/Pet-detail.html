@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chi Tiết Thú Cưng - <span th:text="${pet.name}">Tên Thú Cưng</span></title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        /* Global Styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5, #e2e6ea);
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Full-screen Wrapper */
+        .pet-detail-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+        /* Card Container */
+        .pet-detail-container {
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+        /* Pet Image */
+        .pet-image {
+            width: 100%;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pet-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        /* Pet Information */
+        .pet-info {
+            margin-top: 30px;
+        }
+        .pet-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8B0000;
+            margin-bottom: 20px;
+        }
+        .pet-info p {
+            font-size: 1.1rem;
+            color: #555;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .pet-info .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #008000;
+            margin-top: 20px;
+        }
+        /* Button Style */
+        .btn-back {
+            margin-top: 40px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #8B0000, #D4A373);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #D4A373, #8B0000);
+        }
+    </style>
+</head>
+<body>
+<!-- Include Header -->
+<th:block th:replace="Layout/Header"></th:block>
+
+<div class="pet-detail-wrapper">
+    <div class="pet-detail-container">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Hình ảnh thú cưng: sử dụng trường imageBase64 -->
+                <img th:if="${pet.imageBase64 != null}" th:src="${pet.imageBase64}" alt="Hình ảnh thú cưng" class="pet-image">
+                <img th:if="${pet.imageBase64 == null}" src="/images/default-pet.jpg" alt="Hình ảnh thú cưng" class="pet-image">
+            </div>
+            <div class="col-md-6">
+                <div class="pet-info">
+                    <h2 th:text="${pet.name}">Tên Thú Cưng</h2>
+                    <p><strong>Loài:</strong> <span th:text="${pet.species}">Species</span></p>
+                    <p><strong>Giống:</strong> <span th:text="${pet.breed}">Breed</span></p>
+                    <p><strong>Tuổi:</strong> <span th:text="${pet.age}">0</span> năm</p>
+                    <p><strong>Cân nặng:</strong> <span th:text="${pet.weight}">0</span> kg</p>
+                    <p><strong>Tình trạng sức khỏe:</strong> <span th:text="${pet.healthNotes}">Mô tả sức khỏe</span></p>
+                    <p><strong>Tình trạng tiêm chủng:</strong> <span th:text="${pet.vaccinationStatus}">Trạng thái tiêm chủng</span></p>
+                    <p class="price" th:text="${pet.price} + ' VNĐ'">Giá: 0 VNĐ</p>
+                </div>
+            </div>
+        </div>
+        <a href="/user/pets/list" class="btn btn-secondary btn-back">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<th:block th:replace="Layout/Footer"></th:block>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

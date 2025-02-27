@@ -1,0 +1,102 @@
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<!-- Custom CSS -->
+<style>
+    /* Header styling */
+    .navbar {
+        background: linear-gradient(135deg, #D2B48C, #F5F5DC) !important;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Brand logo and name */
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-brand:hover {
+        color: #e0e0e0 !important;
+    }
+
+    /* User avatar styling */
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+    .avatar:hover {
+        border-color: #e0e0e0;
+        transform: scale(1.1);
+    }
+
+    .nav-link {
+        color: #000 !important;
+        text-decoration: none !important;
+        border: none;
+    }
+
+    .nav-link:hover {
+        color: #FFD700 !important; /* Màu vàng khi hover */
+    }
+
+    .dropdown-menu {
+        background-color: #ffffff;
+    }
+
+    .dropdown-item {
+        color: #000000;
+    }
+
+    .dropdown-item:hover {
+        background-color: #dcdcdc;
+        color: #000000;
+    }
+</style>
+
+<!-- Header -->
+<header class="navbar navbar-expand-lg navbar-light shadow-sm px-4">
+    <div class="container-fluid">
+        <!-- Logo và tên website -->
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-paw"></i>
+            <span>Pet Shop Admin</span>
+        </a>
+
+        <!-- Nếu user đã đăng nhập -->
+        <div th:if="${session.userEmail != null}" class="dropdown ms-auto">
+            <a href="#" class="d-flex align-items-center dropdown-toggle nav-link" role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg" alt="Avatar" class="avatar me-2">
+                <span class="nav-link" th:text="${session.userEmail}">Tài Khoản</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="/profile">Trang Cá Nhân</a></li>
+                <li><a class="dropdown-item" href="/logout">Đăng Xuất</a></li>
+                <li><a class="dropdown-item" href="/home">Trang người dùng</a></li>
+            </ul>
+        </div>
+
+        <!-- Nếu chưa đăng nhập -->
+        <div th:if="${session.userEmail == null}" class="ms-auto">
+            <a href="/login" class="btn btn-outline-light me-2">Đăng Nhập</a>
+            <a href="/register" class="btn btn-warning">Đăng Ký</a>
+        </div>
+    </div>
+</header>
+
+<!-- Bootstrap JS -->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
