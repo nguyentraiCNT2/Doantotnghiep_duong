@@ -14,4 +14,6 @@ public interface UserByPetService {
     void addPetForUser(UserBuyPetDTO userBuyPetDTO);
     void updatePetForUser(UserBuyPetDTO userBuyPetDTO);
     void deleteUserBuyPet(UserBuyPetDTO userBuyPetDTO);
+    void sendReminders();
+
 }

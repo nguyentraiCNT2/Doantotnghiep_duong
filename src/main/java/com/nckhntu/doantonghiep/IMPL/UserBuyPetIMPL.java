@@ -1,23 +1,21 @@
 package com.nckhntu.doantonghiep.IMPL;
 
 import com.nckhntu.doantonghiep.DTO.UserBuyPetDTO;
-import com.nckhntu.doantonghiep.Entity.PetEntity;
-import com.nckhntu.doantonghiep.Entity.UserBuyPetEntity;
-import com.nckhntu.doantonghiep.Entity.UserEntity;
-import com.nckhntu.doantonghiep.Repository.PetRepository;
-import com.nckhntu.doantonghiep.Repository.UserBuyPetRepository;
-import com.nckhntu.doantonghiep.Repository.UserRepository;
+import com.nckhntu.doantonghiep.Entity.*;
+import com.nckhntu.doantonghiep.Repository.*;
 import com.nckhntu.doantonghiep.Service.UserByPetService;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +26,17 @@ public class UserBuyPetIMPL implements UserByPetService {
     private final PetRepository petRepository;
     private final UserBuyPetRepository userBuyPetRepository;
     private final HttpSession session;
+    private final ChatRepository chatRepository;
+    private final RoomRepository roomRepository;
 
-    public UserBuyPetIMPL(UserRepository userRepository, ModelMapper modelMapper, PetRepository petRepository, UserBuyPetRepository userBuyPetRepository, HttpSession session) {
+    public UserBuyPetIMPL(UserRepository userRepository, ModelMapper modelMapper, PetRepository petRepository, UserBuyPetRepository userBuyPetRepository, HttpSession session, ChatRepository chatRepository, RoomRepository roomRepository) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.petRepository = petRepository;
         this.userBuyPetRepository = userBuyPetRepository;
         this.session = session;
+        this.chatRepository = chatRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -126,6 +128,19 @@ public class UserBuyPetIMPL implements UserByPetService {
 
 // Lưu đối tượng vào database
             userBuyPetRepository.save(userBuyPetEntity);
+                String contentAuto =
+                        "    <div style=\"background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); display: inline-block;\">\n" +
+                        "        <h1 style=\"color: #ff6600;\">Cảm ơn quý khách!</h1>\n" +
+                        "        <p style=\"font-size: 16px; color: #333;\">Chúc bạn và thú cưng có những khoảnh khắc tuyệt vời!</p>\n" +
+                        "    </div>" ;
+            RoomEntity roomEntity = roomRepository.findByCustomer(user.getId());
+            ChatEntity chatEntity = new ChatEntity();
+            chatEntity.setContent(contentAuto);
+            chatEntity.setUserId(staff);
+            chatEntity.setRoomId(roomEntity);
+            chatEntity.setCreatedAt(Timestamp.from(Instant.now()));
+            chatRepository.save(chatEntity);
+
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -152,5 +167,28 @@ public class UserBuyPetIMPL implements UserByPetService {
     @Override
     public void deleteUserBuyPet(UserBuyPetDTO userBuyPetDTO) {
 
+    }
+
+
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy mỗi ngày lúc 0h sáng
+    @Override
+    public void sendReminders() {
+        Timestamp threeMonthsAgo = Timestamp.valueOf(LocalDateTime.now().minusMonths(3));
+        List<UserBuyPetEntity> customers = userBuyPetRepository.findCustomersToNotify(threeMonthsAgo);
+        UserEntity userEntity = userRepository.findById(1L).get();
+        for (UserBuyPetEntity customer : customers) {
+            String messageHtml = "<div style='background:white;padding:15px;border-radius:10px;box-shadow:0 0 5px rgba(0,0,0,0.1);max-width:400px;margin:auto;'>"
+                    + "<h2 style='color:#ff6600;'>Nhắc nhở khám thú cưng</h2>"
+                    + "<p>Chào <b>" + customer.getUser().getUsername() + "</b>, đã đến lúc đưa <b>" + customer.getPet().getName() + "</b> đi kiểm tra sức khỏe! 🐾</p>"
+                    + "</div>";
+
+            RoomEntity roomEntity = roomRepository.findByCustomer(customer.getId());
+            ChatEntity chatEntity = new ChatEntity();
+            chatEntity.setContent(messageHtml);
+            chatEntity.setUserId(userEntity);
+            chatEntity.setRoomId(roomEntity);
+            chatEntity.setCreatedAt(Timestamp.from(Instant.now()));
+            chatRepository.save(chatEntity);
+        }
     }
 }
